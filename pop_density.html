@@ -124,24 +124,21 @@
             '#80002670'
         ];
 
-        // Async function to fetch GeoJSON data (as per instructions)
+       
         async function geojsonFetch() {
             
             let response;
             let stateData;
             try {
-                 // Try to fetch the local file from instructions
+                 
                  response = await fetch('assets/state_data.geojson');
                  stateData = await response.json();
             } catch (e) {
-                // Fallback to the working URL if local file fails
-                console.error("Error fetching 'assets/state_data.geojson'.", e);
-                console.warn("Falling back to Mapbox URL. This does not match lab instructions.");
                 response = await fetch('https://docs.mapbox.com/mapbox-gl-js/assets/us_states.geojson');
                 stateData = await response.json();
             }
 
-            // Run map logic only after the map has loaded
+            
             map.on('load', () => {
                 
                 // 1. Add Data Source (as per instructions)
@@ -151,7 +148,7 @@
                     'generateId': true // Required for hover state
                 });
 
-                // 2. Add Map Layer (as per instructions)
+                
                 map.addLayer({
                     'id': 'stateData-layer',
                     'type': 'fill',
@@ -174,7 +171,7 @@
                     }
                 });
 
-                // 3. Add Legend (as per instructions)
+              
                 const legend = document.getElementById('legend');
                 legend.innerHTML = "<b>Population Density<br>(people/sq.mi.)</b><br>";
 
@@ -193,7 +190,7 @@
                 });
 
                 // 4. Add Interactivity (Info Window)
-                // This is the correct, complete implementation of section 3.5
+                
 
                 // On mouse move, update the info window
                 map.on('mousemove', 'stateData-layer', (e) => {
@@ -212,16 +209,19 @@
                             { hover: true }
                         );
 
-                        // Update the info window text
-                        const properties = e.features[0].properties;
+                       
+                        // Store features in a constant variable named 'state'
+                        const state = e.features;
+                        
+                        // Use state[0].properties.name and state[0].properties.density
                         document.getElementById('text-description').innerHTML =
-                            `<h3>${properties.STATE_NAME}</h3><p><strong>${properties.density.toFixed(2)}</strong> people / mi²</p>`;
+                            `<h3>${state[0].properties.name}</h3><p><strong>${state[0].properties.density}</strong> people / mi²</p>`;
                     }
                 });
 
-                // On mouse leave, reset the info window
+               
                 map.on('mouseleave', 'stateData-layer', () => {
-                    // Reset the hovered state
+                    
                     if (hoveredStateId !== null) {
                         map.setFeatureState(
                             { source: 'stateData', id: hoveredStateId },
@@ -230,7 +230,7 @@
                     }
                     hoveredStateId = null;
                     
-                    // Reset the info window text
+                    
                     document.getElementById('text-description').innerHTML =
                         '<p>Hover over a state!</p>';
                 });
